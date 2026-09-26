@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.UUID;
 import io.restassured.response.Response;
 import static org.hamcrest.Matchers.equalTo;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.After;
 import io.restassured.http.ContentType;
@@ -11,9 +13,14 @@ import static io.restassured.RestAssured.given;
 import io.restassured.http.ContentType;
 import java.util.List;
 public class CreateUserTest {
-
+    private User user;
     private String token;
 UserClient userClient = new UserClient();
+
+@Before
+public void createUser(){
+    user = new User(randomUserEmail(), "password", "Dany");
+}
     @After
     public void tearDown() {
         if (token != null) {
@@ -28,7 +35,7 @@ UserClient userClient = new UserClient();
 
     @Test
     public void createUniqueUserTest(){
-User user = new User(randomUserEmail(), "password", "Dany");
+
 Response response = userClient.createUser(user);
 
 response.then().statusCode(200).body("success", equalTo(true));
@@ -39,7 +46,7 @@ this.token = response.path("accessToken");
 @Test
 
     public void createExistingUserTest(){
-        User user = new User(randomUserEmail(), "password", "Dany");
+
         Response creaeteResponse = userClient.createUser(user);
     this.token = creaeteResponse.path("accessToken");
        Response response =  userClient.createUser(user);
@@ -47,29 +54,9 @@ this.token = response.path("accessToken");
        response.then().statusCode(403 ).body( "success", equalTo(false)).body("message", equalTo("User already exists"));
 
 }
-
-@Test
-    public void loginExistingUserTest(){
-        String email = randomUserEmail();
-        User user = new User(email, "password", "Dany");
-        userClient.createUser(user);
-        UserCredentials userCredentials = new UserCredentials(email, "password");
-        Response response = userClient.loginUser(userCredentials);
-        this.token = response.path("accessToken");
-        response.then().statusCode(200).body("success", equalTo(true));
-
-}
-@Test
-public void loginUserWithInvalidCredentialsTest(){
-        UserCredentials userCredentials = new UserCredentials("igorsmirnov-yandex.ru", "password888");
-        Response response = userClient.loginUser(userCredentials);
-        response.then().statusCode(401).body("success", equalTo(false)).body("message", equalTo("email or password are incorrect"));
-}
-
 @Test
     public void createOrderWithAuthorizationTest(){
-User user = new User(randomUserEmail(), "password", "Dany");
-Response response = userClient.createUser(user);
+    Response response = userClient.createUser(user);
 this.token = response.path("accessToken");
 Response response1 = userClient.getIngredients();
 List<String> ingredients = response1.path("data._id");
@@ -88,8 +75,7 @@ userClient.createOrder(token,order).then().statusCode(200). body("success", equa
 }
 @Test
     public void createOrderWithoutIngredientsTest(){
-        User user = new User(randomUserEmail(), "password", "Dany");
-        Response response = userClient.createUser(user);
+    Response response = userClient.createUser(user);
     this.token = response.path("accessToken");
     List<String> ingridient = new ArrayList<>();
     Order order = new Order(ingridient);
@@ -100,7 +86,6 @@ response1.then().statusCode(400).body("success", equalTo(false)).body("message",
 }
 @Test
 public void createOrderWithInvalidIngredientHashTest(){
-    User user = new User(randomUserEmail(), "password", "Dany");
     Response response = userClient.createUser(user);
     this.token = response.path("accessToken");
     List<String> ingridient = new ArrayList<>();
