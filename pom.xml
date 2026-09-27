@@ -15,7 +15,11 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
         <allure.version>2.29.0</allure.version>
+        <allure.results.directory>
+            ${project.build.directory}/allure-results
+        </allure.results.directory>
     </properties>
 
     <dependencies>
@@ -36,7 +40,15 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Allure -->
+        <!-- Jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.17.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Allure JUnit 4 -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-junit4</artifactId>
@@ -45,5 +57,42 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+
+            <!-- Запуск тестов и создание allure-results -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.4</version>
+
+                <configuration>
+
+                    <properties>
+                        <property>
+                            <name>listener</name>
+                            <value>io.qameta.allure.junit4.AllureJunit4</value>
+                        </property>
+                    </properties>
+
+                    <systemPropertyVariables>
+                        <allure.results.directory>
+                            ${allure.results.directory}
+                        </allure.results.directory>
+                    </systemPropertyVariables>
+
+                </configuration>
+            </plugin>
+
+            <!-- Генерация Allure отчёта -->
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>2.12.0</version>
+            </plugin>
+
+        </plugins>
+    </build>
 
 </project>
