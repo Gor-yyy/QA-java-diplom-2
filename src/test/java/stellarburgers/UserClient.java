@@ -3,11 +3,22 @@ package stellarburgers;
 import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import io.restassured.RestAssured;
+import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 
 public class UserClient {
+
+    static {
+        RestAssured.baseURI = "https://stellarburgers.education-services.ru";
+    }
+
+    public String randomUserEmail() {
+        String mail = UUID.randomUUID() + "@yandex.ru";
+        return mail;
+    }
 
     @Step("Создание пользователя")
     public Response createUser(User user) {
@@ -15,7 +26,7 @@ public class UserClient {
                 .contentType(ContentType.JSON)
                 .body(user)
                 .when()
-                .post("https://stellarburgers.education-services.ru/api/auth/register");
+                .post("api/auth/register");
         return response;
     }
 
@@ -25,7 +36,7 @@ public class UserClient {
                 .contentType(ContentType.JSON)
                 .body(userCredentials)
                 .when()
-                .post("https://stellarburgers.education-services.ru/api/auth/login");
+                .post("api/auth/login");
         return response;
     }
 
@@ -33,14 +44,14 @@ public class UserClient {
     public Response deleteUser(String token) {
         Response response = given()
                 .header("Authorization", token)
-                .delete("https://stellarburgers.education-services.ru/api/auth/user");
+                .delete("api/auth/user");
         return response;
     }
 
     @Step("Получение ингредиентов")
     public Response getIngredients() {
         Response response = when()
-                .get("https://stellarburgers.education-services.ru/api/ingredients");
+                .get("api/ingredients");
         return response;
     }
 
@@ -50,7 +61,7 @@ public class UserClient {
                 .contentType(ContentType.JSON)
                 .header("Authorization", token)
                 .body(order)
-                .post("https://stellarburgers.education-services.ru/api/orders");
+                .post("api/orders");
         return response;
     }
 

@@ -1,5 +1,7 @@
 package stellarburgers;
 
+import java.util.UUID;
+
 public class UserCredentials {
     private String email;
     private String password;
@@ -16,4 +18,10 @@ public class UserCredentials {
     public String getPassword(){
         return password;
     }
+
+    public String randomUserEmail() {
+        String mail = UUID.randomUUID() + "@yandex.ru";
+        return mail;
+    }
+
 }
