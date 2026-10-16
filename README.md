@@ -1,4 +1,4 @@
-# QA Java Diploma 2 — API Test Automation
+# QA Java Diplom 2 — API Test Automation
 
 ## Project Overview
 
